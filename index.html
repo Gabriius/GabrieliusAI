@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Clips</title>
+<meta name="description" content="Done-for-you Shorts for tennis creators. Send your match footage, get back a month of scroll-stopping vertical clips — cut, captioned, and ready to post.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23080a0f'/%3E%3Ccircle cx='50' cy='50' r='27' fill='%23cbf321'/%3E%3Cpath d='M44 42 L44 58 L58 50 Z' fill='%23080a0f'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#080a0f;
+    --bg-2:#0b0e15;
+    --surface:#10141d;
+    --surface-2:#161b26;
+    --surface-3:#1c2230;
+    --border:#232a37;
+    --border-bright:#333c4d;
+    --text:#f3f5ec;
+    --muted:#8b94a4;
+    --muted-2:#5f6878;
+    --accent:#cbf321;
+    --accent-bright:#e8ff5a;
+    --accent-deep:#a6cc0e;
+    --ink:#080a0f;
+    --maxw:1160px;
+    --r:16px;
+    --ease:cubic-bezier(.22,1,.36,1);
+    /* spacing scale */
+    --s-1:8px; --s-2:14px; --s-3:22px; --s-4:34px; --s-5:52px; --s-6:80px; --s-7:120px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:17px;
+    line-height:1.65;
+    margin:0;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* layered ambient background */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(60% 40% at 78% -5%, rgba(203,243,33,.10), transparent 60%),
+      radial-gradient(50% 45% at 8% 8%, rgba(45,120,90,.10), transparent 60%),
+      radial-gradient(70% 60% at 50% 108%, rgba(203,243,33,.06), transparent 60%),
+      var(--bg);
+  }
+  /* film grain for depth */
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{margin:0;text-wrap:balance;line-height:1.02}
+  p{margin:0}
+  img,svg{display:block}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .display{font-family:"Anton",Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:-.01em}
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:500;display:inline-flex;align-items:center;gap:9px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:linear-gradient(90deg,var(--accent),transparent)}
+  .mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---- buttons ---- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.55em;
+    font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:16px;
+    padding:15px 26px;border-radius:999px;cursor:pointer;border:1px solid transparent;
+    transition:transform .28s var(--ease), background .2s ease, box-shadow .28s var(--ease), border-color .2s ease;
+    will-change:transform;
+  }
+  .btn-primary{background:var(--accent);color:var(--ink);
+    box-shadow:0 1px 0 rgba(255,255,255,.35) inset, 0 10px 30px -10px rgba(203,243,33,.55), 0 4px 12px -6px rgba(203,243,33,.4)}
+  .btn-primary:hover{background:var(--accent-bright);transform:translateY(-2px);
+    box-shadow:0 1px 0 rgba(255,255,255,.4) inset, 0 18px 44px -12px rgba(203,243,33,.65), 0 6px 16px -6px rgba(203,243,33,.5)}
+  .btn-primary:active{transform:translateY(0)}
+  .btn-ghost{background:rgba(255,255,255,.02);color:var(--text);border-color:var(--border-bright)}
+  .btn-ghost:hover{background:var(--surface-2);border-color:var(--muted-2);transform:translateY(-2px)}
+  .btn-ghost:active{transform:translateY(0)}
+  .btn:focus-visible{outline:2px solid var(--accent-bright);outline-offset:3px}
+
+  /* ---- nav ---- */
+  header.nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px) saturate(140%);
+    background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--border)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:"Anton",sans-serif;
+    text-transform:uppercase;font-size:22px;letter-spacing:.02em}
+  .brand .accent{color:var(--accent)}
+  .nav-links{display:flex;align-items:center;gap:34px}
+  .nav-links a{color:var(--muted);font-weight:600;font-size:15px;transition:color .18s ease;position:relative}
+  .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:1.5px;background:var(--accent);transition:right .28s var(--ease)}
+  .nav-links a:hover{color:var(--text)}
+  .nav-links a:hover::after{right:0}
+  .logo{width:40px;height:40px;flex:none;filter:drop-shadow(0 4px 10px rgba(203,243,33,.25))}
+  .nav-cta{padding:11px 20px;font-size:15px}
+
+  /* ---- hero ---- */
+  .hero{position:relative;padding:96px 0 40px}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:56px;align-items:center;position:relative}
+  .badge-row{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-family:"JetBrains Mono",monospace;font-size:12px;
+    letter-spacing:.04em;color:var(--muted);background:var(--surface);border:1px solid var(--border);
+    padding:7px 13px;border-radius:999px}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(203,243,33,.18)}
+  .stars{color:var(--accent);letter-spacing:2px;font-size:13px}
+  .hero h1{font-size:clamp(46px,6.6vw,88px);margin:8px 0 22px;letter-spacing:-.02em}
+  .hero h1 .lime{color:var(--accent);position:relative}
+  .hero .lede{color:var(--muted);font-size:clamp(17px,1.7vw,20px);max-width:36ch;margin-bottom:30px}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .trust{margin-top:22px;color:var(--muted-2);font-size:13.5px;display:flex;align-items:center;gap:10px}
+  .trust b{color:var(--text)}
+
+  /* ---- hero reel visual ---- */
+  .reel-stage{position:relative;height:520px;display:flex;align-items:center;justify-content:center}
+  .reel-stage .glow{position:absolute;width:420px;height:420px;border-radius:50%;
+    background:radial-gradient(circle,rgba(203,243,33,.18),transparent 62%);filter:blur(14px);z-index:0}
+  .phone{position:relative;z-index:3;width:250px;aspect-ratio:9/19.5;border-radius:32px;
+    background:linear-gradient(160deg,#141a24,#0a0d14);border:1px solid var(--border-bright);
+    padding:9px;box-shadow:0 40px 90px -40px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.02) inset;
+    animation:floaty 6s var(--ease) infinite}
+  .phone .screen{position:relative;height:100%;border-radius:24px;overflow:hidden;
+    background:linear-gradient(150deg,#1c3a2b,#12202f 55%,#0d1420)}
+  .phone .court{position:absolute;inset:0;opacity:.5}
+  .phone .topbar{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;
+    align-items:center;z-index:2}
+  .phone .topbar .rec{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.1em;color:var(--text);
+    background:rgba(8,10,15,.6);padding:3px 7px;border-radius:5px;display:flex;align-items:center;gap:5px}
+  .phone .topbar .rec i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:block}
+  .phone .progress{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.12);z-index:3}
+  .phone .progress i{display:block;height:100%;width:64%;background:var(--accent);
+    box-shadow:0 0 10px rgba(203,243,33,.8)}
+  .phone .rail{position:absolute;right:11px;bottom:78px;display:flex;flex-direction:column;gap:15px;z-index:3;align-items:center}
+  .phone .rail b{width:30px;height:30px;border-radius:50%;background:rgba(8,10,15,.5);border:1px solid rgba(255,255,255,.14);
+    display:block;position:relative}
+  .phone .rail b::after{content:"";position:absolute;inset:0;margin:auto;width:12px;height:12px;
+    background:rgba(243,245,236,.85);-webkit-mask:var(--i) center/contain no-repeat;mask:var(--i) center/contain no-repeat}
+  .phone .cap{position:absolute;left:12px;right:52px;bottom:16px;z-index:3}
+  .phone .cap .handle{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--text);opacity:.9;margin-bottom:7px}
+  .phone .cap .sub{font-family:"Anton",sans-serif;text-transform:uppercase;font-size:19px;line-height:1.02;letter-spacing:0;
+    color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+  .phone .cap .sub em{color:var(--accent);font-style:normal}
+  .phone .play{position:absolute;inset:0;margin:auto;width:52px;height:52px;border-radius:50%;
+    background:rgba(8,10,15,.42);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:2;
+    border:1px solid rgba(255,255,255,.16)}
+  .phone .play::before{content:"";border-left:15px solid #fff;border-top:9px solid transparent;
+    border-bottom:9px solid transparent;margin-left:4px}
+  /* stacked cards behind phone */
+  .stack{position:absolute;z-index:1;width:150px;aspect-ratio:9/16;border-radius:16px;border:1px solid var(--border);
+    overflow:hidden;box-shadow:0 30px 60px -40px rgba(0,0,0,.9)}
+  .stack .lbl{position:absolute;left:8px;bottom:8px;font-family:"JetBrains Mono",monospace;font-size:8px;
+    letter-spacing:.08em;color:var(--text);background:rgba(8,10,15,.6);padding:3px 6px;border-radius:4px}
+  .stack.a{left:8%;top:12%;transform:rotate(-9deg);background:linear-gradient(165deg,#203a2b,#0e1622);animation:floaty 6s var(--ease) .4s infinite}
+  .stack.b{right:6%;top:8%;transform:rotate(8deg);background:linear-gradient(165deg,#2a2f18,#141a12);animation:floaty 6.6s var(--ease) .2s infinite}
+  .stack.c{right:9%;bottom:8%;transform:rotate(6deg);background:linear-gradient(165deg,#132a34,#0d1622);animation:floaty 7s var(--ease) .6s infinite}
+  .conv-badge{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);z-index:4;
+    font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.04em;color:var(--ink);
+    background:var(--accent);padding:8px 16px;border-radius:999px;font-weight:700;
+    box-shadow:0 14px 30px -12px rgba(203,243,33,.7)}
+  .conv-badge b{font-weight:700}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .stack.a{animation-name:floatyA}.stack.b{animation-name:floatyB}.stack.c{animation-name:floatyC}
+  @keyframes floatyA{0%,100%{transform:rotate(-9deg) translateY(0)}50%{transform:rotate(-9deg) translateY(-10px)}}
+  @keyframes floatyB{0%,100%{transform:rotate(8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-14px)}}
+  @keyframes floatyC{0%,100%{transform:rotate(6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-8px)}}
+
+  /* ---- platform strip ---- */
+  .platforms{margin-top:20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,.012)}
+  .platforms .wrap{display:flex;align-items:center;gap:34px;flex-wrap:wrap;justify-content:center;padding:20px 24px}
+  .platforms .p-label{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted-2)}
+  .platforms .plat{display:inline-flex;align-items:center;gap:9px;color:var(--muted);font-weight:700;font-size:15px;
+    transition:color .2s ease,transform .2s ease}
+  .platforms .plat:hover{color:var(--text);transform:translateY(-2px)}
+  .platforms .plat svg{width:19px;height:19px}
+
+  /* ---- scoreboard stat strip ---- */
+  .scoreboard{border-bottom:1px solid var(--border)}
+  .scoreboard .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+  .stat{padding:34px 24px;border-left:1px solid var(--border);position:relative}
+  .stat:first-child{border-left:0}
+  .stat .num{font-family:"Anton",sans-serif;font-size:48px;line-height:1;color:var(--text)}
+  .stat .num .u{color:var(--accent);font-size:28px}
+  .stat .lbl{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin-top:10px}
+
+  /* ---- sections ---- */
+  section{padding:var(--s-7) 0}
+  .sec-head{max-width:660px;margin-bottom:var(--s-5)}
+  .sec-head.center{margin-inline:auto;text-align:center}
+  .sec-head.center .eyebrow{justify-content:center}
+  .sec-head h2{font-size:clamp(32px,4.6vw,54px);margin:16px 0 16px;letter-spacing:-.015em}
+  .sec-head p{color:var(--muted);font-size:18px}
+
+  /* ---- steps ---- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .step{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);
+    border-radius:var(--r);padding:32px 28px;position:relative;overflow:hidden;
+    transition:border-color .3s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease)}
+  .step::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0,rgba(203,243,33,.08),transparent 55%);
+    opacity:0;transition:opacity .3s ease}
+  .step:hover{border-color:var(--border-bright);transform:translateY(-4px);
+    box-shadow:0 30px 60px -40px rgba(0,0,0,.9),0 0 0 1px rgba(203,243,33,.06)}
+  .step:hover::before{opacity:1}
+  .step .score{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent);letter-spacing:.1em;position:relative}
+  .step h3{font-family:"Anton",sans-serif;text-transform:uppercase;font-size:25px;margin:14px 0 12px;position:relative;letter-spacing:0}
+  .step p{color:var(--muted);font-size:15.5px;position:relative}
+  .step .ico{width:48px;height:48px;border-radius:13px;background:var(--surface-2);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;margin-top:24px;position:relative}
+
+  /* ---- comparison ---- */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .col{border-radius:20px;padding:34px 30px;border:1px solid var(--border)}
+  .col.old{background:linear-gradient(180deg,var(--surface),var(--bg-2))}
+  .col.new{background:linear-gradient(180deg,rgba(203,243,33,.07),var(--surface));border-color:var(--accent-deep);
+    box-shadow:0 40px 80px -50px rgba(203,243,33,.4)}
+  .col h3{font-family:"Anton",sans-serif;text-transform:uppercase;font-size:24px;margin-bottom:6px;letter-spacing:0}
+  .col .tagline{font-size:14px;color:var(--muted);margin-bottom:24px}
+  .col.new .tagline{color:var(--accent-deep)}
+  .col ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:15px}
+  .col li{display:flex;gap:13px;font-size:15.5px;align-items:flex-start}
+  .col.old li{color:var(--muted)}
+  .col li .mk{flex:none;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .col.old .mk{background:rgba(255,255,255,.04);border:1px solid var(--border-bright);color:var(--muted-2)}
+  .col.new .mk{background:var(--accent);color:var(--ink)}
+  .col li b{color:var(--text);font-weight:600}
+
+  /* ---- features ---- */
+  .features{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .feat{display:flex;gap:18px;padding:28px;border:1px solid var(--border);border-radius:var(--r);
+    background:linear-gradient(180deg,var(--surface),var(--bg-2));
+    transition:transform .3s var(--ease),border-color .3s var(--ease)}
+  .feat:hover{transform:translateY(-3px);border-color:var(--border-bright)}
+  .feat .ico{flex:none;width:44px;height:44px;border-radius:12px;background:var(--surface-2);
+    border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+  .feat h3{font-size:19px;margin-bottom:7px;font-weight:800}
+  .feat p{color:var(--muted);font-size:15px}
+
+  /* ---- testimonials ---- */
+  .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .tcard{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);
+    border-radius:var(--r);padding:28px;display:flex;flex-direction:column;gap:18px;
+    transition:transform .3s var(--ease),border-color .3s var(--ease)}
+  .tcard:hover{transform:translateY(-4px);border-color:var(--border-bright)}
+  .tcard .stars{font-size:14px}
+  .tcard blockquote{margin:0;font-size:16px;line-height:1.6;color:var(--text)}
+  .tcard .who{display:flex;align-items:center;gap:12px;margin-top:auto}
+  .tcard .av{width:40px;height:40px;border-radius:50%;flex:none;background:linear-gradient(150deg,var(--accent-deep),#2a3a12);
+    display:flex;align-items:center;justify-content:center;font-family:"Anton",sans-serif;color:var(--ink);font-size:17px}
+  .tcard .who .nm{font-weight:700;font-size:14.5px}
+  .tcard .who .hd{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted-2)}
+
+  /* ---- pricing ---- */
+  .prices{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:start}
+  .price{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:20px;
+    padding:32px 28px;display:flex;flex-direction:column;gap:18px;position:relative;
+    transition:transform .3s var(--ease),border-color .3s var(--ease)}
+  .price:hover{transform:translateY(-4px);border-color:var(--border-bright)}
+  .price.feature{border-color:var(--accent-deep);background:linear-gradient(180deg,rgba(203,243,33,.08),var(--surface));
+    box-shadow:0 40px 80px -50px rgba(203,243,33,.5)}
+  .price .tier{display:flex;align-items:center;justify-content:space-between}
+  .price .tier .name{font-family:"Anton",sans-serif;text-transform:uppercase;font-size:22px;letter-spacing:0}
+  .price .badge{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--accent);color:var(--ink);padding:4px 9px;border-radius:999px;font-weight:700}
+  .price .amt{font-family:"Anton",sans-serif;font-size:54px;line-height:1;letter-spacing:0}
+  .price .amt small{font-family:"Hanken Grotesk",sans-serif;font-size:15px;color:var(--muted);font-weight:600;
+    text-transform:none;letter-spacing:0}
+  .price ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+  .price li{display:flex;gap:11px;color:var(--muted);font-size:15px;align-items:flex-start}
+  .price li svg{flex:none;margin-top:2px;color:var(--accent)}
+  .price li b{color:var(--text);font-weight:600}
+  .price .btn{justify-content:center;margin-top:6px}
+
+  /* ---- faq ---- */
+  .faq{display:grid;grid-template-columns:1fr 1fr;gap:8px 40px}
+  .qa{border-top:1px solid var(--border);padding:22px 0}
+  .qa h3{font-size:18px;margin-bottom:9px;font-weight:800;display:flex;gap:10px;align-items:baseline}
+  .qa h3 .q{font-family:"JetBrains Mono",monospace;color:var(--accent);font-size:13px;font-weight:500}
+  .qa p{color:var(--muted);font-size:15px}
+
+  /* ---- cta ---- */
+  .cta{padding:var(--s-7) 0}
+  .cta-box{background:
+      radial-gradient(60% 120% at 82% 12%,rgba(203,243,33,.16),transparent 55%),
+      radial-gradient(50% 120% at 10% 90%,rgba(45,120,90,.12),transparent 55%),
+      linear-gradient(160deg,var(--surface-2),var(--surface));
+    border:1px solid var(--border-bright);border-radius:28px;padding:72px 48px;text-align:center;position:relative;overflow:hidden}
+  .cta-box::before{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+    background:radial-gradient(40% 60% at 50% 0,rgba(203,243,33,.1),transparent 60%)}
+  .cta-box .eyebrow{justify-content:center;position:relative}
+  .cta-box h2{font-size:clamp(34px,5vw,62px);margin:16px 0 18px;position:relative;letter-spacing:-.015em}
+  .cta-box p{color:var(--muted);font-size:19px;max-width:46ch;margin:0 auto 32px;position:relative}
+  .cta-box .btn{margin:0 auto;position:relative}
+
+  /* ---- footer ---- */
+  footer{border-top:1px solid var(--border);padding:44px 0}
+  .foot{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .foot .tag{font-family:"Anton",sans-serif;text-transform:uppercase;color:var(--muted);font-size:14px;letter-spacing:.03em}
+  .foot .muted{color:var(--muted-2);font-size:13.5px}
+
+  @media (max-width:960px){
+    .hero-grid{grid-template-columns:1fr;gap:24px}
+    .reel-stage{height:440px;margin-top:8px}
+    .compare,.features,.tgrid{grid-template-columns:1fr}
+    .prices{grid-template-columns:1fr}
+    .faq{grid-template-columns:1fr;gap:0}
+  }
+  @media (max-width:760px){
+    .scoreboard .wrap{grid-template-columns:repeat(2,1fr)}
+    .stat:nth-child(3){border-left:0}
+    .stat:nth-child(3),.stat:nth-child(4){border-top:1px solid var(--border)}
+    .steps{grid-template-columns:1fr}
+    .nav-links{display:none}
+    section{padding:76px 0}
+    .cta-box{padding:52px 26px}
+    .hero{padding:64px 0 24px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important;scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="Ace Clips home">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="42" fill="#050709"/>
+        <circle cx="50" cy="50" r="26" fill="#cbf321"/>
+        <path d="M29 34 C42 44,42 56,29 66" fill="none" stroke="#050709" stroke-width="3" stroke-linecap="round"/>
+        <path d="M71 34 C58 44,58 56,71 66" fill="none" stroke="#050709" stroke-width="3" stroke-linecap="round"/>
+        <path d="M44 42 L44 58 L58 50 Z" fill="#050709"/>
+      </svg>
+      <span>Ace<span class="accent">Clips</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#compare">Why us</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#pricing" class="btn btn-primary nav-cta">Get a free test batch</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="badge-row">
+          <span class="pill"><span class="dot"></span>Done-for-you Shorts · for tennis creators</span>
+          <span class="pill"><span class="stars">★★★★★</span> loved by creators</span>
+        </div>
+        <h1 class="display">Your matches.<br>A month of <span class="lime">Shorts.</span><br>Zero editing.</h1>
+        <p class="lede">You play the tennis. We turn your raw uploads and streams into scroll-stopping vertical clips — cut, captioned, and posted to Shorts, Reels &amp; TikTok.</p>
+        <div class="hero-cta">
+          <a href="#pricing" class="btn btn-primary">Serve up a free test batch →</a>
+          <a href="#how" class="btn btn-ghost">See how it works</a>
+        </div>
+        <p class="trust">No editing software. No new gear. <b>Just send us the tape.</b></p>
+      </div>
+
+      <!-- reel visual: one match -> many shorts -->
+      <div class="reel-stage" aria-label="One long match becomes many short vertical clips">
+        <div class="glow"></div>
+
+        <div class="stack a"><span class="lbl">0:41 · Rally</span></div>
+        <div class="stack b"><span class="lbl">1:12 · Ace</span></div>
+        <div class="stack c"><span class="lbl">0:28 · Reaction</span></div>
+
+        <div class="phone">
+          <div class="screen">
+            <svg class="court" viewBox="0 0 250 500" preserveAspectRatio="none" aria-hidden="true">
+              <g stroke="#cbf321" stroke-opacity=".32" fill="none" stroke-width="1.4">
+                <rect x="50" y="120" width="150" height="260"/>
+                <line x1="50" y1="250" x2="200" y2="250"/>
+                <line x1="125" y1="120" x2="125" y2="380"/>
+                <line x1="85" y1="175" x2="165" y2="175"/>
+                <line x1="85" y1="325" x2="165" y2="325"/>
+              </g>
+            </svg>
+            <div class="progress"><i></i></div>
+            <div class="topbar">
+              <span class="rec"><i></i> REEL 03</span>
+              <span class="rec">0:32</span>
+            </div>
+            <div class="play" aria-hidden="true"></div>
+            <div class="rail" aria-hidden="true">
+              <b style="--i:url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M12 21s-7-4.5-9.5-8.5C.5 9 2 5.5 5.5 5.5 7.5 5.5 9 7 12 9c3-2 4.5-3.5 6.5-3.5 3.5 0 5 3.5 3 7C19 16.5 12 21 12 21z%22/%3E%3C/svg%3E')"></b>
+              <b style="--i:url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M21 6h-18v12h4v4l4-4h10z%22/%3E%3C/svg%3E')"></b>
+              <b style="--i:url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M4 12l16-8-6 16-3-6z%22/%3E%3C/svg%3E')"></b>
+            </div>
+            <div class="cap">
+              <div class="handle">@your_handle</div>
+              <div class="sub">18-shot rally ends<br>in a <em>screamer</em> 🎾</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="conv-badge">1 match&nbsp;<b>→</b>&nbsp;24 clips</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORM STRIP -->
+  <div class="platforms">
+    <div class="wrap">
+      <span class="p-label">Posted for you to</span>
+      <span class="plat"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.9-.5-5.6a2.9 2.9 0 0 0-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.4a2.9 2.9 0 0 0-2 2C1 8.1 1 12 1 12s0 3.9.5 5.6a2.9 2.9 0 0 0 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.4a2.9 2.9 0 0 0 2-2C23 15.9 23 12 23 12zM9.8 15.3V8.7l5.7 3.3z"/></svg>YouTube Shorts</span>
+      <span class="plat"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 5.5a4.9 4.9 0 0 1-3-1v7.9a5.9 5.9 0 1 1-5.9-5.9c.3 0 .6 0 .9.1v2.9a3 3 0 1 0 2.1 2.9V2h2.9a4.9 4.9 0 0 0 3 3.5z"/></svg>TikTok</span>
+      <span class="plat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>Instagram Reels</span>
+    </div>
+  </div>
+
+  <!-- SCOREBOARD -->
+  <div class="scoreboard">
+    <div class="wrap">
+      <div class="stat"><div class="num"><span data-count="20">0</span><span class="u">+</span></div><div class="lbl">Clips / week</div></div>
+      <div class="stat"><div class="num"><span data-count="24">0</span><span class="u">h</span></div><div class="lbl">Turnaround</div></div>
+      <div class="stat"><div class="num"><span data-count="3">0</span><span class="u">×</span></div><div class="lbl">Platforms posted</div></div>
+      <div class="stat"><div class="num"><span data-count="0">0</span><span class="u">h</span></div><div class="lbl">Editing for you</div></div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">The rally · 3 steps</span>
+        <h2 class="display">From baseline to posted</h2>
+        <p>You touch it once — to send us footage. We handle everything after that.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="score">15 · love</div>
+          <h3>You send the tape</h3>
+          <p>Drop a YouTube link, a Twitch VOD, or raw match files. A whole tournament works — the messier the better.</p>
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cbf321" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg></div>
+        </div>
+        <div class="step reveal">
+          <div class="score">30 · love</div>
+          <h3>AI finds the moments</h3>
+          <p>Our system scans for winners, rallies, aces and reactions, then cuts them to 9:16 with punchy hooks and captions.</p>
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cbf321" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2.4"/></svg></div>
+        </div>
+        <div class="step reveal">
+          <div class="score">40 · love</div>
+          <h3>You post &amp; grow</h3>
+          <p>Approve the batch in one tap. Clips land on your Shorts, Reels and TikTok on a steady, daily schedule.</p>
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cbf321" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 3 6-8"/><path d="M18 4h3v3"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section id="compare" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Why us</span>
+        <h2 class="display">The grind vs. the pipeline</h2>
+        <p>Editing your own Shorts eats the time you'd rather spend on court. Here's the trade.</p>
+      </div>
+      <div class="compare">
+        <div class="col old reveal">
+          <h3>Doing it yourself</h3>
+          <p class="tagline">Nights lost to the timeline</p>
+          <ul>
+            <li><span class="mk">✕</span><span>Hours scrubbing full matches for the 30 seconds worth posting</span></li>
+            <li><span class="mk">✕</span><span>Learning editing software, captions, and export settings</span></li>
+            <li><span class="mk">✕</span><span>Posting stops the week life gets busy — and the algorithm forgets you</span></li>
+            <li><span class="mk">✕</span><span>Clips look rushed, so they don't hold the scroll</span></li>
+          </ul>
+        </div>
+        <div class="col new reveal">
+          <h3>Ace Clips</h3>
+          <p class="tagline">Send footage. Get a month of Shorts.</p>
+          <ul>
+            <li><span class="mk">✓</span><span><b>Zero editing</b> — you send one link, we do the rest</span></li>
+            <li><span class="mk">✓</span><span><b>20+ finished clips a week</b>, captioned and on-brand</span></li>
+            <li><span class="mk">✓</span><span><b>Posted daily for you</b>, so consistency never slips</span></li>
+            <li><span class="mk">✓</span><span><b>Hook-first edits</b> engineered to stop the thumb</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY / FEATURES -->
+  <section id="why" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Built for the feed</span>
+        <h2 class="display">Made for the mute-scroll era</h2>
+        <p>Every clip is engineered around how people actually watch Shorts — fast, silent, and unforgiving.</p>
+      </div>
+      <div class="features">
+        <div class="feat reveal"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbf321" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><div><h3>Hooks that hold</h3><p>The first 1.5 seconds are engineered to stop the thumb — the moment people decide to keep watching.</p></div></div>
+        <div class="feat reveal"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbf321" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H7l-3 3z"/><path d="M8 10h8M8 13h5"/></svg></div><div><h3>Captions built in</h3><p>Around 85% of Shorts are watched on mute. Every clip ships with clean, readable burned-in captions.</p></div></div>
+        <div class="feat reveal"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbf321" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div><h3>Post every day, effortlessly</h3><p>Consistency is the whole game on Shorts. We keep the pipeline full so you never miss a day.</p></div></div>
+        <div class="feat reveal"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbf321" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><div><h3>Your brand, your handle</h3><p>Your colours, your logo, your intro and outro — the clips look like you made them, not a template.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="loved" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head center reveal">
+        <span class="eyebrow">Match point</span>
+        <h2 class="display">Creators are stacking wins</h2>
+        <p>What tennis creators say after their first month on the pipeline.</p>
+      </div>
+      <div class="tgrid">
+        <div class="tcard reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>"I went from posting once a week to every single day — without touching an editor. My views tripled in a month."</blockquote>
+          <div class="who"><div class="av">M</div><div><div class="nm">Marco B.</div><div class="hd">@marco.tennis</div></div></div>
+        </div>
+        <div class="tcard reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>"They pulled clips out of my matches I would never have spotted. The captions and hooks are genuinely better than mine."</blockquote>
+          <div class="who"><div class="av">L</div><div><div class="nm">Lena K.</div><div class="hd">@lenaservesaces</div></div></div>
+        </div>
+        <div class="tcard reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Cheaper than hiring an editor and zero back-and-forth. I send the VOD, the Shorts just show up. Total no-brainer."</blockquote>
+          <div class="who"><div class="av">D</div><div><div class="nm">Deuce Court TV</div><div class="hd">@deucecourt</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head center reveal">
+        <span class="eyebrow">Plans</span>
+        <h2 class="display">Pick your seeding</h2>
+        <p>Cancel anytime. Every plan starts with a free test batch so you see the quality before you pay.</p>
+      </div>
+      <div class="prices">
+        <div class="price reveal">
+          <div class="tier"><span class="name">Qualifier</span></div>
+          <div class="amt">$299<small> /mo</small></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span><b>12 clips</b> / month</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>48-hour turnaround</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>1 platform</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>Auto captions &amp; hooks</span></li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost">Start free test</a>
+        </div>
+        <div class="price feature reveal">
+          <div class="tier"><span class="name">Seeded</span><span class="badge">Most popular</span></div>
+          <div class="amt">$599<small> /mo</small></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span><b>30 clips</b> / month</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>24-hour turnaround</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span><b>3 platforms</b> — Shorts, Reels, TikTok</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>Custom captions &amp; your branding</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>Unlimited revisions</span></li>
+          </ul>
+          <a href="#contact" class="btn btn-primary">Start free test</a>
+        </div>
+        <div class="price reveal">
+          <div class="tier"><span class="name">Grand Slam</span></div>
+          <div class="amt">$1,200<small> /mo</small></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span><b>60+ clips</b> / month</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>Priority 12-hour turnaround</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>All platforms + thumbnails</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>Posting done for you</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg><span>Monthly growth strategy call</span></li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost">Start free test</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Questions</span>
+        <h2 class="display">Before you serve</h2>
+      </div>
+      <div class="faq">
+        <div class="qa reveal"><h3><span class="q">Q.</span>Do I have to edit anything?</h3><p>No — that's the whole point. You send footage, we send back finished, ready-to-post clips.</p></div>
+        <div class="qa reveal"><h3><span class="q">Q.</span>What footage works?</h3><p>YouTube videos, Twitch VODs, phone clips, or any match footage you own the rights to. Long and unedited is fine.</p></div>
+        <div class="qa reveal"><h3><span class="q">Q.</span>Who owns the clips?</h3><p>You do — 100%. Everything we produce is yours to keep and post wherever you like.</p></div>
+        <div class="qa reveal"><h3><span class="q">Q.</span>How fast can I start?</h3><p>Your first free test batch lands within 48 hours of sending your first video.</p></div>
+        <div class="qa reveal"><h3><span class="q">Q.</span>What if I don't like a clip?</h3><p>Every paid plan includes revisions. Tell us what to change and we recut it — no extra charge.</p></div>
+        <div class="qa reveal"><h3><span class="q">Q.</span>Will it look like my channel?</h3><p>Yes. We match your colours, fonts, handle and intro so the clips feel native to your brand.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="contact">
+    <div class="wrap">
+      <div class="cta-box reveal">
+        <span class="eyebrow">Game. Set. Match. Posted.</span>
+        <h2 class="display">Put your Shorts on autopilot</h2>
+        <p>Send us one match. We'll send back a batch of finished clips — free. If you like them, we keep the pipeline running.</p>
+        <a href="mailto:hello@aceclips.co" class="btn btn-primary">Get my free test batch →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="brand" style="font-size:18px">
+      <svg class="logo" style="width:32px;height:32px" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="42" fill="#050709"/>
+        <circle cx="50" cy="50" r="26" fill="#cbf321"/>
+        <path d="M29 34 C42 44,42 56,29 66" fill="none" stroke="#050709" stroke-width="3" stroke-linecap="round"/>
+        <path d="M71 34 C58 44,58 56,71 66" fill="none" stroke="#050709" stroke-width="3" stroke-linecap="round"/>
+        <path d="M44 42 L44 58 L58 50 Z" fill="#050709"/>
+      </svg>
+      <span>Ace<span class="accent">Clips</span></span>
+    </div>
+    <span class="tag">Your match footage → a month of Shorts</span>
+    <span class="muted">© 2026 Ace Clips · hello@aceclips.co</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // reveal on scroll
+    var revealEls = document.querySelectorAll('.reveal');
+    if (reduce || !('IntersectionObserver' in window)) {
+      revealEls.forEach(function(el){ el.classList.add('in'); });
+    } else {
+      var ro = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+      revealEls.forEach(function(el){ ro.observe(el); });
+    }
+
+    // count-up stats
+    var counters = document.querySelectorAll('[data-count]');
+    function animate(el){
+      var target = +el.getAttribute('data-count');
+      if (reduce || target === 0){ el.textContent = target; return; }
+      var start = performance.now(), dur = 1100;
+      function tick(now){
+        var p = Math.min((now - start)/dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    if (!('IntersectionObserver' in window)) {
+      counters.forEach(animate);
+    } else {
+      var co = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting){ animate(e.target); co.unobserve(e.target); }
+        });
+      }, { threshold: 1 });
+      counters.forEach(function(el){ co.observe(el); });
+    }
+  })();
+</script>
+</body>
+</html>
